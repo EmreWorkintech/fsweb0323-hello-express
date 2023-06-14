@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const racesRouter = require('../races/races-router');
+const { nameCheck } = require('../auth/auth-middleware');
+
 
 let id = 0;
 function getId() {
@@ -18,7 +20,7 @@ router.use('/races', racesRouter);
 //CRUD Operations
 
 //Create  -POST
-router.post('/', (req,res)=>{
+router.post('/', nameCheck, (req,res)=>{
     const newHobbit = {
         id: getId(),  //req.body.data.id
         name: req.body.name
@@ -29,7 +31,7 @@ router.post('/', (req,res)=>{
 })
 
 //Read
-router.get('/', (req,res)=>{
+router.get('/', (req,res,next)=>{
     const fieldName = req.query.sortBy || 'name';  //route params olarak alma {sortby: "id", dir: "dec", per_page: "3"}
     const orderedHobbits = hobbits.sort((a,b)=> a[fieldName]<b[fieldName] ? -1: 1);
     res.json(orderedHobbits)
